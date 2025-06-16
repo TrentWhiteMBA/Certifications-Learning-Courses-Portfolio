@@ -1,0 +1,37 @@
+#import csv
+
+#This library helps read and write the CSV files. 
+
+#import secrets
+
+#This helps generate random passwords for each user account. 
+
+#import subprocess
+
+#This calls the useradd command, which creates and adds each user account.
+
+#from pathlib import Path   # to locate the data files
+
+#This library helps to locate the data files for each user account.
+
+
+
+cwd = Path.cwd() / "drive/MyDrive/Colab Notebooks" #Use cwd for “current working directory” and identify the path of the Python directory as a string: 
+
+with open(cwd / "data/users_in.csv", "r") as file_input, open(cwd / "data/users_out.csv", "w") as file_output:
+
+reader = csv.DictReader(file_input)
+writer = csv.DictWriter(file_output,fieldnames=reader.fieldnames)
+     writer.writeheader()
+
+for user in reader:
+    user["password"] = secrets.token_hex(8)
+        useradd_cmd = ["/sbin/useradd",
+                       "-c", user["real_name"],
+                       "-m",
+                       "-G", "users",
+                       "-p", user["password"],
+                       user["username"]]
+        subprocess.run(useradd_cmd, check=True)
+
+   writer.writerow(user)
